@@ -20,10 +20,17 @@ async function startServer() {
   });
 
   const PORT = process.env.PORT || 4000;
+server.listen({
+  port: PORT,
+  path: '/graphql',
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
+}).then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+});
 
-  server.listen(PORT).then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`);
-  });
 }
 
 startServer().catch((err) => console.error(err));
