@@ -1,4 +1,5 @@
 import * as Mutation from "./mutations"
-export const resolvers = {
+const resolvers = {
   Mutation
 }
+export default resolvers
