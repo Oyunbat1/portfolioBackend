@@ -10,10 +10,10 @@
     "apollo-server": "^3.13.0",
     "dotenv": "^16.3.1",
     "graphql": "^16.9.0",
-    "mongoose": "^8.8.0",
-    "@types/node": "^22.5.0"
+    "mongoose": "^8.8.0"
   },
   "devDependencies": {
+    "@types/node": "^24.3.0",
     "typescript": "^5.5.4"
   }
 }
