@@ -16,60 +16,27 @@ require("dotenv/config");
 const apollo_server_express_1 = require("apollo-server-express");
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const schema_1 = __importDefault(require("./schema/schema"));
-const index_1 = require("./graphql/index");
-const cors_1 = __importDefault(require("cors"));
+const schema_1 = __importDefault(require("../src/schema/schema"));
+const index_1 = __importDefault(require("../src/graphql/resolvers/index"));
 const MONGODB_URI = process.env.MONGODB_URI;
 function startServer() {
     return __awaiter(this, void 0, void 0, function* () {
         if (!MONGODB_URI) {
             throw new Error("MONGODB_URI environment variable is not defined.");
         }
-        try {
-            yield mongoose_1.default.connect(MONGODB_URI);
-            console.log("Connected to MongoDB");
-        }
-        catch (error) {
-            console.error("MongoDB connection error:", error);
-        }
-        const app = (0, express_1.default)();
-        // CORS configuration
-        app.use((0, cors_1.default)({
-            origin: process.env.FRONTEND_URL || "http://localhost:3000",
-            credentials: true
-        }));
-        // Body parser middleware
-        app.use(express_1.default.json());
+        yield mongoose_1.default.connect(MONGODB_URI);
+        console.log("connect to mongodb");
         const server = new apollo_server_express_1.ApolloServer({
             typeDefs: schema_1.default,
-            resolvers: index_1.resolvers,
-            context: ({ req }) => ({ req }),
-            introspection: true, // Enable GraphQL Playground in production
+            resolvers: index_1.default,
         });
         yield server.start();
-        server.applyMiddleware({ app, path: '/graphql' });
-        // Health check endpoint
-        app.get('/health', (req, res) => {
-            res.json({ status: 'OK', timestamp: new Date().toISOString() });
-        });
-        // Root endpoint
-        app.get('/', (req, res) => {
-            res.json({
-                message: 'GraphQL API Server',
-                endpoint: '/graphql',
-                playground: '/graphql'
-            });
-        });
+        const app = (0, express_1.default)();
+        server.applyMiddleware({ app });
         const PORT = process.env.PORT || 4000;
-        if (process.env.NODE_ENV !== 'production') {
-            // Only start server in development
-            app.listen(PORT, () => {
-                console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
-            });
-        }
-        return app;
+        app.listen(PORT, () => {
+            console.log(`Server is ready at http://localhost:${PORT}${server.graphqlPath}`);
+        });
     });
 }
-// For Vercel serverless functions
-const app = startServer();
-exports.default = app;
+startServer().catch((err) => console.error(err));
