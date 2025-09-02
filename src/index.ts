@@ -5,7 +5,7 @@ import typeDefs from "./schema/schema";
 import resolvers from "./graphql/resolvers/index";
 
 const MONGODB_URI = process.env.MONGODB_URI;
-
+const FRONTEND_URL = process.env.FRONTEND_URL || "*"; 
 async function startServer() {
   if (!MONGODB_URI) {
     throw new Error("MONGODB_URI environment variable is not defined.");
@@ -24,7 +24,7 @@ server.listen({
   port: PORT,
   path: '/graphql',
   cors: {
-    origin: '*',
+    origin: FRONTEND_URL,
     credentials: true,
   },
 }).then(({ url }) => {
