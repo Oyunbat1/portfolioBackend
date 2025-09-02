@@ -13,11 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
-const apollo_server_express_1 = require("apollo-server-express");
-const express_1 = __importDefault(require("express"));
+const apollo_server_1 = require("apollo-server");
 const mongoose_1 = __importDefault(require("mongoose"));
-const schema_1 = __importDefault(require("../src/schema/schema"));
-const index_1 = __importDefault(require("../src/graphql/resolvers/index"));
+const schema_1 = __importDefault(require("./schema/schema"));
+const index_1 = __importDefault(require("./graphql/resolvers/index"));
 const MONGODB_URI = process.env.MONGODB_URI;
 function startServer() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -25,17 +24,14 @@ function startServer() {
             throw new Error("MONGODB_URI environment variable is not defined.");
         }
         yield mongoose_1.default.connect(MONGODB_URI);
-        console.log("connect to mongodb");
-        const server = new apollo_server_express_1.ApolloServer({
+        console.log("✅ Connected to MongoDB");
+        const server = new apollo_server_1.ApolloServer({
             typeDefs: schema_1.default,
             resolvers: index_1.default,
         });
-        yield server.start();
-        const app = (0, express_1.default)();
-        server.applyMiddleware({ app });
         const PORT = process.env.PORT || 4000;
-        app.listen(PORT, () => {
-            console.log(`Server is ready at http://localhost:${PORT}${server.graphqlPath}`);
+        server.listen(PORT).then(({ url }) => {
+            console.log(`🚀 Server ready at ${url}`);
         });
     });
 }
