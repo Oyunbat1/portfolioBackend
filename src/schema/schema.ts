@@ -4,6 +4,7 @@ const typeDefs = gql`
   type Message {
     id: ID!
     name: String!
+    social: String!
     email: String!
     company: String!
     service: String!
@@ -18,6 +19,7 @@ const typeDefs = gql`
     createMessage(
       name: String!
       email: String!
+      social: String!
       company: String!
       service: String!
       message: String!
